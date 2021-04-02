@@ -1,0 +1,28 @@
+apiVersion: gateway.solo.io/v1
+kind: VirtualService
+metadata:
+  name: httpbin
+  namespace: gloo-system
+spec:
+  virtualHost:
+    domains:
+    - '*'
+    routes:
+    # - matchers:
+    #   - prefix: /
+    #   routeAction:
+    #     single:
+    #       kube:
+    #         ref:
+    #           name: httpbin
+    #           namespace: default
+    #         port: 8000
+      - matchers:
+          - prefix: /
+        routeAction:
+          single:
+            kube:
+              ref:
+                name: admin-server
+                namespace: dev-portal
+              port: 8080

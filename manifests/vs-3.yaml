@@ -1,0 +1,85 @@
+apiVersion: gateway.solo.io/v1
+kind: VirtualService
+metadata:
+  name: petclinic
+  namespace: gloo-system
+spec:
+  
+  virtualHost:
+    domains:
+      - "*"
+    options:
+      transformations:
+        responseTransformation:
+          transformationTemplate:
+            parseBodyBehavior: DontParse
+            body:
+              text: '{% if header(":status") == "429" %}<html><body style="display:flex;height:100vh;width:100%;align-items:center;flex-direction:column;justify-content:center;background-color:black;color:red;text-align:center"><h1>Too many Requests!</h1><br/><p style="color:white;">Try again after 10 seconds</p></body></html>{% else %}{{ body() }}{% endif %}'
+    routes:
+      - matchers:
+          - prefix: /headers
+        routeAction:
+          single:
+            upstream:
+              name: default-httpbin-8000
+              namespace: gloo-system
+      # - matchers:
+      #   - prefix: /portal
+      #   routeAction:
+      #     single:
+      #       kube:
+      #         ref:
+      #           name: admin-server
+      #           namespace: dev-portal
+      #         port: 8080
+      #   options:
+      #     prefixRewrite: '/'
+      - matchers:
+          - prefix: /contact
+        routeAction:
+          single:
+            destinationSpec:
+              aws:
+                logicalName: contact-form:3
+                responseTransformation: true
+            upstream:
+              name: aws
+              namespace: gloo-system
+        options:
+          rateLimitConfigs:
+            refs:
+            - name: db-policy
+              namespace: gloo-system
+      - matchers:
+          - prefix: /vets
+        routeAction:
+          multi:
+            destinations:
+            - weight: 5
+              destination:
+                upstream:
+                  name: default-petclinic-vets-8080
+            - weight: 5
+              destination:
+                upstream:
+                  name: default-petclinic-8080
+      
+      - matchers:
+          - prefix: /api/pets
+        routeAction:
+          single:
+            upstream:
+              name: default-petstore-8080
+              namespace: gloo-system
+      - matchers:
+          - prefix: /
+        routeAction:
+          single:
+            upstream:
+              name: default-petclinic-8080
+              namespace: gloo-system
+    options:
+      extauth:
+        configRef:
+          name: google-oidc
+          namespace: gloo-system
