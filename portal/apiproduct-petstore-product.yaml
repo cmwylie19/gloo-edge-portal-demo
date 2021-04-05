@@ -1,0 +1,25 @@
+apiVersion: devportal.solo.io/v1alpha1
+kind: APIProduct
+metadata:
+  name: petstore-product
+  namespace: default
+spec:
+  displayInfo:
+    description: Petstore Product
+    title: Petstore Product
+  versions:
+  - apis:
+    - apiDoc:
+        name: petstore-schema
+        namespace: default
+      openApi: {}
+    defaultRoute:
+      inlineRoute:
+        backends:
+        - kube:
+            name: petstore
+            namespace: default
+            port: 8080
+    name: v1
+    tags:
+      stable: {}

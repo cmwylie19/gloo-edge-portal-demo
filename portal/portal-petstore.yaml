@@ -1,0 +1,22 @@
+apiVersion: devportal.solo.io/v1alpha1
+kind: Portal
+metadata:
+  name: petstore-portal
+  namespace: default
+spec:
+  banner:
+    fetchUrl: https://i.imgur.com/EXbBN1a.jpg
+  customStyling: {}
+  description: The Gloo Portal for the Petstore API
+  displayName: Petstore Portal
+  domains:
+  - petstore.example.com:32000
+  - petstore.example.com
+  favicon:
+    fetchUrl: https://i.imgur.com/QQwlQG3.png
+  primaryLogo:
+    fetchUrl: https://i.imgur.com/hjgPMNP.png
+  publishedEnvironments:
+  - name: dev
+    namespace: default
+  staticPages: []
