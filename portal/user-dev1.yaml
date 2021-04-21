@@ -1,0 +1,14 @@
+apiVersion: devportal.solo.io/v1alpha1
+kind: User
+metadata:
+  labels:
+    groups.devportal.solo.io/dev-portal.developers: "true"
+  name: dev1
+  namespace: dev-portal
+spec:
+  accessLevel: {}
+  basicAuth:
+    passwordSecretKey: password
+    passwordSecretName: dev1-password
+    passwordSecretNamespace: dev-portal
+  username: dev1

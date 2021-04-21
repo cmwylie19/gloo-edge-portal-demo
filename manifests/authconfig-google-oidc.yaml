@@ -9,7 +9,7 @@ spec:
       oidcAuthorizationCode:
         app_url: http://localhost:8080
         callback_path: /callback
-        client_id: 967359009029-ei2d6cq87lmbqsbve7oi8mt8s2ab0fpt.apps.googleusercontent.com
+        client_id: 967359009029-rkfgu49os1hbtsfono7i1di3igpkuhio.apps.googleusercontent.com
         client_secret_ref:
           name: google
           namespace: gloo-system

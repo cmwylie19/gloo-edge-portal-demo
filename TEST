@@ -1,0 +1,4 @@
+kubectl get apidoc petstore-schema -ojsonpath='{.status.state}'
+kubectl get apiproduct petstore-product -ojsonpath='{.status.state}'
+kubectl get environment dev -ojsonpath='{.status.state}'
+kubectl get portal petstore-portal -ojsonpath='{.status.state}'

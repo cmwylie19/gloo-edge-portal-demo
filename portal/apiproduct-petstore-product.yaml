@@ -3,12 +3,14 @@ kind: APIProduct
 metadata:
   name: petstore-product
   namespace: default
+
 spec:
-  displayInfo:
+  displayInfo: 
     description: Petstore Product
     title: Petstore Product
   versions:
-  - apis:
+  - name: v1
+    apis:
     - apiDoc:
         name: petstore-schema
         namespace: default
@@ -20,6 +22,5 @@ spec:
             name: petstore
             namespace: default
             port: 8080
-    name: v1
     tags:
       stable: {}

@@ -1,0 +1,52 @@
+apiVersion: gateway.solo.io/v1
+kind: Gateway
+metadata:
+  labels:
+    app: gloo
+  name: gateway-proxy
+  namespace: gloo-system
+spec:
+  bindAddress: '::'
+  bindPort: 8080
+  httpGateway:
+    options:
+      healthCheck:
+        path: /check/healthz
+      httpConnectionManagerSettings:
+        useRemoteAddress: true
+      waf:
+        auditLogging:
+          action: ALWAYS
+          location: FILTER_STATE
+        customInterventionMessage: ModSecurity intervention! Custom message details
+          here..
+        ruleSets:
+        - ruleStr: |
+            # Turn rule engine on
+            SecRuleEngine On
+            SecAuditLogFormat JSON
+            SecRule REQUEST_HEADERS:User-Agent "scammer" "deny,status:403,id:107,phase:1,msg:'blocked scammer'"
+  options:
+    accessLoggingService:
+      accessLog:
+      - fileSink:
+          jsonFormat:
+            duration: '%DURATION%'
+            dynamicMetadata: '%DYNAMIC_METADATA("io.solo.filters.http.modsecurity:audit_log")%'
+            endpoint_url: '%DYNAMIC_METADATA(io.solo.transformation:endpoint_url)%'
+            filterState: '%FILTER_STATE(io.solo.modsecurity.audit_log)%'
+            method: '%REQ(:METHOD)%'
+            path: '%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%'
+            pod_name: '%DYNAMIC_METADATA(io.solo.transformation:pod_name)%'
+            protocol: '%PROTOCOL%'
+            remoteAddress: '%DOWNSTREAM_REMOTE_ADDRESS%'
+            responseCode: '%RESPONSE_CODE%'
+            stringFormat: "%FILTER_STATE(io.solo.modsecurity.audit_log)%\n"
+            systemTime: '%START_TIME%'
+            upstreamCluster: '%UPSTREAM_CLUSTER%'
+            upstreamHost: '%UPSTREAM_HOST%'
+            xForwardFor: '%REQ(X-FORWARDED-FOR)%'
+          path: /dev/stdout
+  proxyNames:
+  - gateway-proxy
+  useProxyProto: false

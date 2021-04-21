@@ -4,16 +4,22 @@ metadata:
   name: dev
   namespace: default
 spec:
-  apiProducts:
-  - name: petstore-product
-    namespace: default
-    publishedVersions:
-    - name: v1
-  displayInfo:
-    description: This environment is meant for developers to deploy and test their
-      APIs.
-    displayName: Development
   domains:
   - api.example.com
   - api.example.com:32000
-
+  displayInfo:
+    description: This environment is meant for developers to deploy and test their APIs.
+    displayName: Development
+  apiProducts:
+  - name: petstore-product
+    namespace: default
+    plans:
+    - authPolicy:
+        apiKey: {}
+      displayName: Basic
+      name: basic
+      rateLimit:
+        requestsPerUnit: 5
+        unit: MINUTE
+    publishedVersions:
+    - name: v1
