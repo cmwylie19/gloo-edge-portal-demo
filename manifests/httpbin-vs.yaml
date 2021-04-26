@@ -17,8 +17,12 @@ spec:
               name: default-httpbin-8000
               namespace: gloo-system
     options:
-      csrf:
-        filterEnabled:
-          defaultValue:
-            numerator: 100
-            denominator: HUNDRED
+      # idleTimeout: '10s'
+      timeout: '10s'
+      # grpcTimeoutOffset: '10s'
+      # maxGrpcTimeout: '10s'
+      # csrf:
+      #   filterEnabled:
+      #     defaultValue:
+      #       numerator: 100
+      #       denominator: HUNDRED

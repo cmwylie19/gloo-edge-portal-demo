@@ -240,3 +240,12 @@ kubectl apply -f vs-3.yaml
 
 Now if we refresh the "Contact" page, we should see an updated contact form. 
 In local testing, it can take up to 30 seconds for the route to start working.
+
+
+## Upgrade
+```
+helm upgrade --install -n gloo-system glooe glooe/gloo-ee --version=v1.7.2 --set-string license_key="$(cat ~/Playground/licensing/license.key)"
+```
+
+## Patch Gateway-proxy for Remote IP
+`k patch svc/gateway-proxy -n gloo-system -p '{"spec":{"externalTrafficPolicy":"Local"}}'`
