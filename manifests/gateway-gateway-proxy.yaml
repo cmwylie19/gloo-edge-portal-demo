@@ -14,18 +14,6 @@ spec:
         path: /check/healthz
       httpConnectionManagerSettings:
         useRemoteAddress: true
-      waf:
-        auditLogging:
-          action: ALWAYS
-          location: FILTER_STATE
-        customInterventionMessage: ModSecurity intervention! Custom message details
-          here..
-        ruleSets:
-        - ruleStr: |
-            # Turn rule engine on
-            SecRuleEngine On
-            SecAuditLogFormat JSON
-            SecRule REQUEST_HEADERS:User-Agent "scammer" "deny,status:403,id:107,phase:1,msg:'blocked scammer'"
   options:
     accessLoggingService:
       accessLog:
@@ -39,6 +27,8 @@ spec:
             path: '%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%'
             pod_name: '%DYNAMIC_METADATA(io.solo.transformation:pod_name)%'
             protocol: '%PROTOCOL%'
+            clientDuration: '%DURATION%'
+            targetDuration: '%RESPONSE_DURATION%'
             remoteAddress: '%DOWNSTREAM_REMOTE_ADDRESS%'
             responseCode: '%RESPONSE_CODE%'
             stringFormat: "%FILTER_STATE(io.solo.modsecurity.audit_log)%\n"
@@ -49,4 +39,5 @@ spec:
           path: /dev/stdout
   proxyNames:
   - gateway-proxy
+  ssl: false
   useProxyProto: false

@@ -16,9 +16,9 @@ spec:
             upstream:
               name: default-httpbin-8000
               namespace: gloo-system
-    options:
+    #options:
       # idleTimeout: '10s'
-      timeout: '10s'
+      # timeout: '10s'
       # grpcTimeoutOffset: '10s'
       # maxGrpcTimeout: '10s'
       # csrf:

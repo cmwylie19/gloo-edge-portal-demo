@@ -1,6 +1,8 @@
 apiVersion: gateway.solo.io/v1
 kind: Gateway
 metadata:
+  labels:
+    app: gloo
   name: gateway-proxy
   namespace: gloo-system
 spec:
@@ -15,6 +17,7 @@ spec:
       waf:
         auditLogging:
           action: ALWAYS
+          location: FILTER_STATE
         customInterventionMessage: ModSecurity intervention! Custom message details
           here..
         ruleSets:
@@ -36,10 +39,11 @@ spec:
             path: '%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%'
             pod_name: '%DYNAMIC_METADATA(io.solo.transformation:pod_name)%'
             protocol: '%PROTOCOL%'
+            clientDuration: '%DURATION%'
+            targetDuration: '%RESPONSE_DURATION%'
             remoteAddress: '%DOWNSTREAM_REMOTE_ADDRESS%'
             responseCode: '%RESPONSE_CODE%'
-            stringFormat: |
-              %FILTER_STATE(io.solo.modsecurity.audit_log)%
+            stringFormat: "%FILTER_STATE(io.solo.modsecurity.audit_log)%\n"
             systemTime: '%START_TIME%'
             upstreamCluster: '%UPSTREAM_CLUSTER%'
             upstreamHost: '%UPSTREAM_HOST%'
@@ -47,5 +51,5 @@ spec:
           path: /dev/stdout
   proxyNames:
   - gateway-proxy
+  ssl: false
   useProxyProto: false
-
