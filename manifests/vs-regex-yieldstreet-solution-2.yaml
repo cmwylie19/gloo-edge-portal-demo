@@ -1,0 +1,38 @@
+apiVersion: gateway.solo.io/v1
+kind: VirtualService
+metadata:
+  name: "vs-yieldstreet-ex"
+  namespace: "gloo-system"
+spec:
+  virtualHost:
+    domains:
+      - "*"
+    routes:
+      - matchers:
+          - regex: "^/a/api/portfolios/([0-9]+)/investments/(.*)"
+        routeAction:
+          single:
+            upstream:
+              name: "default-node-server-8080" # workloadSelector, this is where your VirtualService is routing
+              namespace: "gloo-system"
+        options:
+          regexRewrite:
+            pattern:
+              google_re2:
+                max_program_size: 1024
+              regex: "^/a/api/portfolios/([0-9]+)/investments/(by-status|by-offering|by-asset-class)$"
+            substitution: "/portfolios/1/investments/2"
+      - matchers:
+          - prefix: "/a/api/portfolios"
+        routeAction:
+          single:
+            upstream:
+              name: "default-node-server-8080" # workloadSelector, this is where your VirtualService is routing
+              namespace: "gloo-system"
+        options:
+          regexRewrite:
+            pattern:
+              google_re2:
+                max_program_size: 1024
+              regex: "^/a/api/portfolios/([0-9]+)$"
+            substitution: "/portfolios/overview/\\1"

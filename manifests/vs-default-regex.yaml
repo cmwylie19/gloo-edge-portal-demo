@@ -1,0 +1,39 @@
+apiVersion: gateway.solo.io/v1
+kind: VirtualService
+metadata:
+  name: 'default'
+  namespace: 'gloo-system'
+spec:
+  virtualHost:
+    domains:
+    - '*'
+    routes:
+    - matchers:
+       - prefix: '/foo'
+      routeAction:
+        single:
+          upstream:
+            name: 'default-petstore-8080'
+            namespace: 'gloo-system'
+      options:
+        regexRewrite: 
+          pattern:
+            google_re2:
+              max_program_size: 1024
+            regex: 'foo'
+          substitution: 'api/pets'
+    - matchers:
+       - prefix: '/pre'
+      routeAction:
+        single:
+          upstream:
+            name: 'default-petstore-8080'
+            namespace: 'gloo-system'
+      options:
+        regexRewrite: 
+          pattern:
+            google_re2:
+              max_program_size: 1024
+            regex: '^/pre/([^/]+)(/.*)$'
+          substitution: '\2/swap/\1'
+status: {}
